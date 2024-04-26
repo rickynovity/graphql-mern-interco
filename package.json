@@ -1,0 +1,19 @@
+{
+  "name": "graphql-mern-interco",
+  "version": "1.0.0",
+  "description": "Training management platform dedicated to professionals in inter-contract periods in the field of software development.",
+  "author": "madava",
+  "license": "MIT",
+  "scripts": {
+    "server:dev": "nodemon server/index.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "@apollo/server": "^4.10.4",
+    "express": "^4.19.2",
+    "graphql": "^16.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
