@@ -1,39 +1,34 @@
-import { ApolloServer } from '@apollo/server';
-import { expressMiddleware } from '@apollo/server/express4';
-import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
-import express from 'express';
-import http from 'http';
-import cors from 'cors';
+import colors from "colors";
+import express from "express";
+import http from "http";
+import cors from "cors";
+import dotenv from "dotenv";
 
+import { ApolloServer } from "@apollo/server";
+import { expressMiddleware } from "@apollo/server/express4";
+import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
+
+import mongoose from "mongoose";
+
+import typeDefs from "./graphql/typeDefs/index.js";
+import resolvers from "./graphql/resolvers/index.js";
 
 const app = express();
+dotenv.config();
+const port = process.env.PORT || 4000;
 
-const typeDefs = `#graphql.
-  type Book {
-    title: String
-    author: String
+const initDb = async (mongoUrl) => {
+  try {
+    const conn = await mongoose.connect(mongoUrl);
+    console.log(
+      `✅ MongoDB Connected: ${conn.connection.host}`.cyan.underline.bold
+    );
+  } catch (error) {
+    console.log(
+      `❌ Error connecting to MongoDB: ${error.message}`.red.underline.bold
+    );
+    process.exit(1);
   }
-
-  type Query {
-    books: [Book]
-  }
-`;
-
-const books = [
-  {
-    title: 'The Awakening',
-    author: 'Kate Chopin',
-  },
-  {
-    title: 'City of Glass',
-    author: 'Paul Auster',
-  },
-];
-
-const resolvers = {
-  Query: {
-    books: () => books,
-  },
 };
 
 const httpServer = http.createServer(app);
@@ -47,14 +42,18 @@ const server = new ApolloServer({
 await server.start();
 
 app.use(
-  '/',
+  "/",
   cors(),
   express.json(),
   expressMiddleware(server, {
     context: async ({ req }) => ({ token: req.headers.token }),
-  }),
+  })
 );
 
-await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
+await new Promise((resolve) => httpServer.listen({ port }, resolve));
+await initDb(process.env.MONGO_DB_URL);
 
-console.log(`🚀 Server ready at http://localhost:4000/`);
+console.log(`
+  🚀  Server is running : http://localhost:${port}
+  🔉  Listening on port ${port}
+`);
