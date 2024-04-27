@@ -1,12 +1,19 @@
-import { users } from "../../dummyData/data.js";
+import UserService from "../../services/user/user.service.js";
 
 const userResolver = {
   Query: {
-    users: (_, __, ___) => users,
-    user: (_, { id }, ___) => users.find((user) => user._id === id),
+    users: async (_, __, ___) => await UserService.getUsers(),
+    user: async (_, { id }, ___) => await UserService.getUser(id),
+    authUser: async (_, __, context) => await UserService.authUser(context),
   },
 
-  // Mutation: {},
+  Mutation: {
+    signUp: async (_, { input }, context) =>
+      await UserService.signUp(input, context),
+    login: async (_, { input }, context) =>
+      await UserService.login(input, context),
+    logout: async (_, __, context) => await UserService.logout(context),
+  },
 };
 
 export default userResolver;
