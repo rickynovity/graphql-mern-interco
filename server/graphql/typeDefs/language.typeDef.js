@@ -11,11 +11,11 @@ const languageTypeDef = gql`
     language(id: ID!): Language
   }
 
-  type mutation {
+  type Mutation {
     createLanguage(input: CreateLanguageInput!): Language!
     deleteLanguage(id: ID!): Language!
     deleteLanguages: [Language!]
-    updateLanguage(id: ID!, input: UpdateLanguageInput!): Language!
+    updateLanguage(input: UpdateLanguageInput!): Language!
   }
 
   input CreateLanguageInput {

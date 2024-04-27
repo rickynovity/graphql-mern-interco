@@ -1,12 +1,21 @@
-import { statuses } from "../../dummyData/data.js";
+import StatusService from "../../services/status/status.service.js";
 
 const statusResolver = {
   Query: {
-    statuses: (_, __, ___) => statuses,
-    status: (_, { id }, ___) => statuses.find((status) => status._id === id),
+    allstatus: async (_, __, ___) => StatusService.getAllStatus(),
+    status: async (_, { id }, ___) => StatusService.getStatus(id),
   },
 
-  // Mutation: {},
+  Mutation: {
+    createStatus: async (_, { input }, ___) =>
+      await StatusService.createStatus(input),
+    deleteStatus: async (_, { id }, ___) =>
+      await StatusService.deleteStatus(id),
+    deleteAllStatus: async (_, __, ___) =>
+      await StatusService.deleteAllStatus(),
+    updateStatus: async (_, { input }, ___) =>
+      await StatusService.updateStatus(input),
+  },
 };
 
 export default statusResolver;

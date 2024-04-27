@@ -20,11 +20,11 @@ const formationTypeDef = gql`
     formation(id: ID!): Formation
   }
 
-  type mutation {
+  type Mutation {
     createFormation(input: CreateFormationInput!): Formation!
     deleteFormation(id: ID!): Formation!
     deleteFormations: [Formation!]
-    updateFormation(id: ID!, input: UpdateFormationInput!): Formation!
+    updateFormation(input: UpdateFormationInput!): Formation!
   }
 
   input CreateFormationInput {

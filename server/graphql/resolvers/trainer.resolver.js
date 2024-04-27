@@ -1,12 +1,20 @@
-import { trainers } from "../../dummyData/data.js";
+import TrainerService from "../../services/trainer/trainer.service.js";
 
 const trainerResolver = {
   Query: {
-    trainers: (_, __, ___) => trainers,
-    trainer: (_, { id }, ___) => trainers.find((trainer) => trainer._id === id),
+    trainers: async (_, __, ___) => await TrainerService.getTrainers(),
+    trainer: async (_, { id }, ___) => await TrainerService.getTrainer(id),
   },
 
-  // Mutation: {},
+  Mutation: {
+    createTrainer: async (_, { input }, ___) =>
+      await TrainerService.createTrainer(input),
+    deleteTrainer: async (_, { id }, ___) =>
+      await TrainerService.deleteTrainer(id),
+    deleteTrainers: async (_, __, ___) => await TrainerService.deleteTrainers(),
+    updateTrainer: async (_, { input }, ___) =>
+      await TrainerService.updateTrainer(input),
+  },
 };
 
 export default trainerResolver;

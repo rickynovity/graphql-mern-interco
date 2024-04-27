@@ -10,11 +10,11 @@ import userTypeDef from "./user.typeDef.js";
 
 const typeDefs = mergeTypeDefs([
   categoryTypeDef,
-  formationTypeDef,
   languageTypeDef,
   statusTypeDef,
   trainerTypeDef,
   userTypeDef,
+  formationTypeDef,
 ]);
 
 export default typeDefs;

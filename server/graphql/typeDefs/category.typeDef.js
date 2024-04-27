@@ -8,14 +8,14 @@ const categoryTypeDef = gql`
 
   type Query {
     categories: [Category!]
-    category(id: ID!): Category
+    category(categoryId: ID!): Category
   }
 
-  type mutation {
+  type Mutation {
     createCategory(input: CreateCategoryInput!): Category!
-    deleteCategory(id: ID!): Category!
+    deleteCategory(categoryId: ID!): Category!
     deleteCategories: [Category!]
-    updateCategory(id: ID!, input: UpdateCategoryInput!): Category!
+    updateCategory(input: UpdateCategoryInput!): Category!
   }
 
   input CreateCategoryInput {

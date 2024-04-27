@@ -13,11 +13,11 @@ const trainerTypeDef = gql`
     trainer(id: ID!): Trainer
   }
 
-  type mutation {
+  type Mutation {
     createTrainer(input: CreateTrainerInput!): Trainer!
     deleteTrainer(id: ID!): Trainer!
     deleteTrainers: [Trainer!]
-    updateTrainer(id: ID!, input: UpdateTrainerInput!): Trainer!
+    updateTrainer(input: UpdateTrainerInput!): Trainer!
   }
 
   type TrainerContact {
@@ -25,13 +25,22 @@ const trainerTypeDef = gql`
     phone: String
   }
 
+  input TrainerContactInput {
+    email: String
+    phone: String
+  }
+
   input CreateTrainerInput {
     name: String!
+    biography: String
+    contact: TrainerContactInput
   }
 
   input UpdateTrainerInput {
     trainerId: ID!
     name: String!
+    biography: String
+    contact: TrainerContactInput
   }
 `;
 export default trainerTypeDef;
