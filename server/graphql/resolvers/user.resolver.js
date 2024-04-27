@@ -1,3 +1,4 @@
+import FormationService from "../../services/formation/formation.service.js";
 import UserService from "../../services/user/user.service.js";
 
 const userResolver = {
@@ -13,6 +14,11 @@ const userResolver = {
     login: async (_, { input }, context) =>
       await UserService.login(input, context),
     logout: async (_, __, context) => await UserService.logout(context),
+  },
+
+  User: {
+    formations: async (parent, __, ___) =>
+      await FormationService.getFormationsByUser(parent._id),
   },
 };
 

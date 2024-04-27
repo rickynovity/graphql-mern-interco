@@ -3,10 +3,13 @@ import FormationService from "../../services/formation/formation.service.js";
 import LanguageService from "../../services/language/language.service.js";
 import StatusService from "../../services/status/status.service.js";
 import TrainerService from "../../services/trainer/trainer.service.js";
+import UserService from "../../services/user/user.service.js";
 
 const formationResolver = {
   Query: {
     formations: async (_, __, ___) => await FormationService.getFormations(),
+    formationsByUser: async (_, { id }, ___) =>
+      await FormationService.getFormationsByUser(id),
     formation: async (_, { id }, ___) =>
       await FormationService.getFormation(id),
   },
@@ -24,12 +27,14 @@ const formationResolver = {
 
   Formation: {
     category: async (parent, __, ___) =>
-      CategoryService.getCategory(parent.categoryId),
-    status: async (parent, __, ___) => StatusService.getStatus(parent.statusId),
+      await CategoryService.getCategory(parent.categoryId),
+    status: async (parent, __, ___) =>
+      await StatusService.getStatus(parent.statusId),
     language: async (parent, __, ___) =>
-      LanguageService.getLanguage(parent.languageId),
+      await LanguageService.getLanguage(parent.languageId),
     trainer: async (parent, __, ___) =>
-      TrainerService.getTrainer(parent.trainerId),
+      await TrainerService.getTrainer(parent.trainerId),
+    user: async (parent, __, ___) => await UserService.getUser(parent.userId),
   },
 };
 

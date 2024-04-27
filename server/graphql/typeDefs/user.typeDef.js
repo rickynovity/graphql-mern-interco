@@ -8,11 +8,12 @@ const userTypeDef = gql`
     password: String!
     profilePicture: String
     gender: String!
+    formations: [Formation!]
   }
 
   type Query {
     users: [User!]
-    user(userId: ID!): User
+    user(id: ID!): User
     authUser: User
   }
 

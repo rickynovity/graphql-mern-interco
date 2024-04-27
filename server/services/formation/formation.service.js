@@ -11,6 +11,19 @@ const FormationService = {
     }
   },
 
+  getFormationsByUser: async (userId) => {
+    try {
+      const totalFormationsByUser = await Formation.countDocuments({ userId });
+      console.log(
+        `All formations by user with id: ${userId}`,
+        totalFormationsByUser
+      );
+      return await Formation.find({ userId });
+    } catch (error) {
+      throw new Error(`Error retrieving formations for user: ${error.message}`);
+    }
+  },
+
   getFormation: async (id) => {
     try {
       console.log("SERVICE_FIND_ONE : ", id);

@@ -13,10 +13,12 @@ const formationTypeDef = gql`
     status: Status
     language: Language
     trainer: Trainer
+    user: User!
   }
 
   type Query {
     formations: [Formation!]
+    formationsByUser(id: ID!): [Formation!] #@requireAuth(role:"USER")
     formation(id: ID!): Formation
   }
 
@@ -38,6 +40,7 @@ const formationTypeDef = gql`
     statusId: ID!
     languageId: ID!
     trainerId: ID!
+    userId: ID!
   }
 
   input UpdateFormationInput {
@@ -52,6 +55,7 @@ const formationTypeDef = gql`
     statusId: ID!
     languageId: ID!
     trainerId: ID!
+    userId: ID!
   }
 `;
 export default formationTypeDef;
