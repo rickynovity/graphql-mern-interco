@@ -51,6 +51,7 @@ const LoginPage = () => {
                 type="password"
                 placeholder="Password"
                 prefix={<TiLockClosedOutline size={18} />}
+                className="dark:bg-slate-950 bg-gray-700/10"
               />
             </div>
             <button className="w-full rounded-lg bg-sky-100/10 hover:bg-sky-500 px-4 py-2 text-xs font-medium transition ease-in-out hover:scale-110 text-sky-600 hover:text-white flex justify-center items-center">

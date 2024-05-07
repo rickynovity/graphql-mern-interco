@@ -69,6 +69,7 @@ const SignUpPage = () => {
                 type="password"
                 placeholder="Password"
                 prefix={<TiLockClosedOutline size={18} />}
+                className="dark:bg-slate-950 bg-gray-700/10"
               />
             </div>
             <div className="col-span-6 sm:col-span-3">
@@ -79,6 +80,7 @@ const SignUpPage = () => {
                 type="password"
                 placeholder="Confirm password"
                 prefix={<TiLockClosedOutline size={18} />}
+                className="dark:bg-slate-950 bg-gray-700/10"
               />
             </div>
             <div className="col-span-6">

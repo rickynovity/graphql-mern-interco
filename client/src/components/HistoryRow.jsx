@@ -3,7 +3,14 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 import { PiEyeClosedBold, PiEyeBold } from "react-icons/pi";
 import { toast } from "sonner";
 
-const HistoryRow = () => {
+const categoryColorMap = {
+  fullstack: "bg-pink-700/25 text-pink-600",
+  backend: "bg-green-700/25 text-green-600",
+  frontend: "bg-sky-700/25 text-sky-600",
+};
+
+const HistoryRow = ({ data }) => {
+  const { categoryType, categoryName } = data;
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = () => {
@@ -13,6 +20,8 @@ const HistoryRow = () => {
   const handleMouseLeave = () => {
     setIsHovered(false);
   };
+
+  const historyRowClass = categoryColorMap[categoryType];
 
   return (
     <>
@@ -25,11 +34,10 @@ const HistoryRow = () => {
           {"[GRAPHQL] - Développement de compétences en GraphQL"}
         </td>
         <td className="whitespace-normal w-10 px-4 py-2">
-          <span className="whitespace-nowrap rounded-full bg-pink-100 px-2.5 py-0.5 text-xs text-pink-600">
-            GraphQL
-          </span>
-          <span className="whitespace-nowrap rounded-full bg-slate-200 px-2.5 py-0.5 text-xs text-slate-900">
-            Apollo
+          <span
+            className={`whitespace-nowrap rounded-full px-2.5 py-1 text-xs ${historyRowClass}`}
+          >
+            {categoryName}
           </span>
         </td>
         <td className="whitespace-nowrap px-4 py-2">12%</td>

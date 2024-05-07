@@ -33,7 +33,7 @@ const FormationCard = () => {
 
       <div className="flex justify-between items-center">
         <div className="mt-4 flex flex-wrap gap-1">
-          <span className="whitespace-nowrap rounded-full bg-pink-100 px-2.5 py-0.5 text-xs text-pink-600">
+          <span className="whitespace-nowrap rounded-full bg-pink-700/25 px-2.5 py-1 text-xs text-pink-600">
             category_1
           </span>
         </div>

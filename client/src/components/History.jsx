@@ -4,6 +4,18 @@ import HistoryRow from "./HistoryRow";
 import AvaBlur from "./ui/AvaBlur";
 
 const History = () => {
+  const data = [
+    { categoryType: "fullstack", categoryName: "FullStack" },
+    { categoryType: "backend", categoryName: "Backend" },
+    { categoryType: "frontend", categoryName: "Frontend" },
+    { categoryType: "fullstack", categoryName: "FullStack" },
+    { categoryType: "backend", categoryName: "Backend" },
+    { categoryType: "frontend", categoryName: "Frontend" },
+    { categoryType: "backend", categoryName: "Backend" },
+    { categoryType: "frontend", categoryName: "Frontend" },
+    { categoryType: "frontend", categoryName: "Frontend" },
+    { categoryType: "fullstack", categoryName: "FullStack" },
+  ];
   return (
     <div className="space-y-5 mb-20">
       <>
@@ -34,13 +46,17 @@ const History = () => {
                 <th className="px-4 py-2"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
-              <HistoryRow />
-              <HistoryRow />
-              <HistoryRow />
-              <HistoryRow />
-              <HistoryRow />
-              <HistoryRow />
+            <tbody className="divide-y divide-red-200">
+              {data &&
+                data.map((category, index) => {
+                  return <HistoryRow key={index} data={category} />;
+                })}
+              {/* <HistoryRow data={data} historyRowCategory="fullstack" />
+              <HistoryRow historyRowCategory="backend" />
+              <HistoryRow historyRowCategory="frontend" />
+              <HistoryRow historyRowCategory="fullstack" />
+              <HistoryRow historyRowCategory="frontend" />
+              <HistoryRow historyRowCategory="fullstack" /> */}
             </tbody>
           </table>
         </div>
