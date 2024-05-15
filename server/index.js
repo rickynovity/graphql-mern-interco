@@ -22,7 +22,7 @@ import resolvers from "./graphql/resolvers/index.js";
 
 const app = express();
 dotenv.config();
-const port = process.env.PORT || 4000;
+const port = process.env.NODE_DOCKER_PORT || 4000;
 configurePassport();
 
 const initDb = async (mongoUrl) => {
@@ -77,7 +77,7 @@ await server.start();
 app.use(
   "/",
   cors({
-    origin: "http://localhost:3000",
+    origin: process.env.CLIENT_ORIGIN || "http://localhost:3000",
     credentials: true,
   }),
   express.json(),

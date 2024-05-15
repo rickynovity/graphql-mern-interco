@@ -1,0 +1,17 @@
+FROM node:20-alpine
+
+WORKDIR /interco/server
+
+COPY yarn.lock yarn.lock
+COPY package.json package.json
+
+RUN yarn install
+
+RUN yarn cache clean
+
+COPY . .
+
+EXPOSE 4000
+
+CMD [ "yarn", "server:dev" ]
+

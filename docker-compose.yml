@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  # Database
+  db-mongo:
+    container_name: ava-db-mongo
+    image: mongo:4.4
+    volumes:
+      - ./database:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - backend
+
+  # Server
+  server:
+    container_name: ava-server
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    ports:
+      - "4000:4000"
+    depends_on:
+      - db-mongo
+    environment:
+      MONGO_DB_URL: mongodb://host.docker.internal:27017/ava_graphql_mern_interco
+      SESSION_SECRET: AZERTYUIOP1234567890
+      NODE_DOCKER_PORT: 4000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - backend
+      - frontend
+
+  # Client
+  client:
+    container_name: ava-client
+    build:
+      context: client
+      dockerfile: Dockerfile.client
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db-mongo
+      - server
+    environment:
+      REACT_APP_SERVER_URL: http://server:4000
+    networks:
+      - frontend
+
+volumes:
+  database:
+
+networks:
+  backend:
+  frontend:
