@@ -5,7 +5,9 @@
   "author": "madava",
   "license": "MIT",
   "scripts": {
-    "server:dev": "nodemon server/index.js"
+    "server:dev": "nodemon server/index.js",
+    "start:dev_container": "docker compose up --build -V",
+    "stop:dev_container": "docker compose down"
   },
   "type": "module",
   "dependencies": {

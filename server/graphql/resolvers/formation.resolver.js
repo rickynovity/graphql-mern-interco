@@ -2,6 +2,7 @@ import CategoryService from "../../services/category/category.service.js";
 import FormationService from "../../services/formation/formation.service.js";
 import LanguageService from "../../services/language/language.service.js";
 import StatusService from "../../services/status/status.service.js";
+import TagNameService from "../../services/tagName/tagName.service.js";
 import TrainerService from "../../services/trainer/trainer.service.js";
 import UserService from "../../services/user/user.service.js";
 
@@ -34,6 +35,8 @@ const formationResolver = {
       await LanguageService.getLanguage(parent.languageId),
     trainer: async (parent, __, ___) =>
       await TrainerService.getTrainer(parent.trainerId),
+    tagNames: async (parent, __, ____) =>
+      await TagNameService.getTagNamesByFormation(parent.tagNameIds),
     user: async (parent, __, ___) => await UserService.getUser(parent.userId),
   },
 };

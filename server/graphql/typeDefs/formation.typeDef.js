@@ -13,6 +13,7 @@ const formationTypeDef = gql`
     status: Status
     language: Language
     trainer: Trainer
+    tagNames: [TagName!]
     user: User!
   }
 
@@ -40,6 +41,7 @@ const formationTypeDef = gql`
     statusId: ID!
     languageId: ID!
     trainerId: ID!
+    tagNameIds: [ID!]
     userId: ID!
   }
 
@@ -55,6 +57,7 @@ const formationTypeDef = gql`
     statusId: ID!
     languageId: ID!
     trainerId: ID!
+    tagNameIds: [ID!]
     userId: ID!
   }
 `;

@@ -51,6 +51,13 @@ const FormationSchema = new mongoose.Schema(
       ref: "Trainer",
       require: true,
     },
+    tagNameIds: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "TagName",
+        require: true,
+      },
+    ],
   },
   { timestamps: true }
 );
