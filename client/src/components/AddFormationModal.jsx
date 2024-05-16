@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import AvaModal from "./ui/AvaModal";
 import { BsFolderPlus } from "react-icons/bs";
 import AvaInputText from "./ui/form/AvaInputText";
-import AvaSelect from "./ui/AvaSelect";
+import AvaSelect from "./ui/form/AvaSelect";
 
 const AddFormationModal = ({ visible, onOk, onCancel, options, tagRender }) => {
   const today = new Date();

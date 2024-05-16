@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { MdAlternateEmail } from "react-icons/md";
 import { IoMdInformationCircleOutline } from "react-icons/io";
@@ -6,14 +6,75 @@ import { VscSignIn } from "react-icons/vsc";
 import { Tooltip } from "antd";
 import AvaInputText from "../components/ui/form/AvaInputText";
 import { TiLockClosedOutline, TiUserOutline } from "react-icons/ti";
+import { useMutation } from "@apollo/client";
+import { SIGN_UP } from "../graphql/mutations/user.mutation";
+import AvaRadio from "../components/ui/form/AvaRadio";
+import { toast } from "sonner";
+import AvaSpinner from "../components/ui/AvaSpinner";
+import NotFoundPage from "./NotFoundPage";
 
 const SignUpPage = () => {
+  const [signUpData, setSignUpData] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    gender: "",
+  });
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const handleChange = (e) => {
+    const { name, value, type } = e.target;
+    if (type === "radio") {
+      setSignUpData((prevData) => ({
+        ...prevData,
+        gender: value,
+      }));
+    } else {
+      setSignUpData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+  };
+
+  const radioOptions = [
+    { value: "male", label: "Male" },
+    { value: "female", label: "Female" },
+  ];
+
   useEffect(() => {
     document.body.classList.add("bg-with-image");
     return () => {
       document.body.classList.remove("bg-with-image");
     };
   }, []);
+
+  const [signUp, { loading, error }] = useMutation(SIGN_UP, {
+    refetchQueries: ["GetAuthenticatedUser"],
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (signUpData.password !== confirmPassword) {
+        setPasswordError("Passwords do not match");
+      } else {
+        await signUp({
+          variables: {
+            input: signUpData,
+          },
+        });
+        console.log("Sign up data : ", signUpData);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error(error.message);
+    }
+  };
+
+  if (loading) return <AvaSpinner />;
+  if (error) return <NotFoundPage />;
 
   return (
     <div
@@ -25,6 +86,7 @@ const SignUpPage = () => {
           <form
             action="#"
             className="grid grid-cols-2 gap-6 mb-0 mt-6 space-y-6 rounded-lg p-8 sm:p-6 lg:px-12"
+            onSubmit={handleSubmit}
           >
             <div className="col-span-6">
               <h1 className="text-xl font-bold  md:text-2xl text-center">
@@ -44,6 +106,9 @@ const SignUpPage = () => {
                     <IoMdInformationCircleOutline />
                   </Tooltip>
                 }
+                name="fullName"
+                value={signUpData.fullName}
+                onChange={handleChange}
               />
             </div>
             <div className="col-span-6">
@@ -59,6 +124,9 @@ const SignUpPage = () => {
                     <IoMdInformationCircleOutline />
                   </Tooltip>
                 }
+                name="email"
+                value={signUpData.email}
+                onChange={handleChange}
               />
             </div>
             <div className="col-span-6 sm:col-span-3">
@@ -70,6 +138,9 @@ const SignUpPage = () => {
                 placeholder="Password"
                 prefix={<TiLockClosedOutline size={18} />}
                 className="dark:bg-slate-950 bg-gray-700/10"
+                name="password"
+                value={signUpData.password}
+                onChange={handleChange}
               />
             </div>
             <div className="col-span-6 sm:col-span-3">
@@ -81,6 +152,24 @@ const SignUpPage = () => {
                 placeholder="Confirm password"
                 prefix={<TiLockClosedOutline size={18} />}
                 className="dark:bg-slate-950 bg-gray-700/10"
+                name="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </div>
+            <div className="col-span-6 text-red-500">
+              {passwordError && passwordError}
+            </div>
+            <div className="col-span-6">
+              <label htmlFor="passwordConfirmation" className="sr-only">
+                Confirm password
+              </label>
+              <AvaRadio
+                name="gender"
+                value={signUpData.gender}
+                onChange={handleChange}
+                options={radioOptions}
+                className="flex justify-between mr-64"
               />
             </div>
             <div className="col-span-6">

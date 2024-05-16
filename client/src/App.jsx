@@ -6,9 +6,11 @@ import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import Header from "./components/Header";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import { Toaster } from "sonner";
+import { GET_AUTHENTICATED_USER } from "./graphql/queries/user.query";
+import { useQuery } from "@apollo/client";
 
 function App() {
   const authUser = true;
@@ -18,15 +20,40 @@ function App() {
     document.title = getPageTitle(location.pathname);
   }, [location]);
 
+  const { loading, error, data } = useQuery(GET_AUTHENTICATED_USER);
+
+  console.log("Loading:", loading);
+  console.log("Authenticated user:", data);
+  console.log("Error:", error);
+
+  if (loading) return null;
+
   return (
     <>
-      {authUser && renderHeader(location.pathname)}
+      {renderHeader(location.pathname)}
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/formations" element={<FormationsPage />} />
-        <Route path="/formation/:id" element={<FormationPage />} />
+        <Route
+          path="/"
+          element={data.authUser ? <HomePage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/login"
+          element={!data.authUser ? <LoginPage /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/signup"
+          element={!data.authUser ? <SignUpPage /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/formations"
+          element={
+            data.authUser ? <FormationsPage /> : <Navigate to="/login" />
+          }
+        />
+        <Route
+          path="/formation/:id"
+          element={data.authUser ? <FormationPage /> : <Navigate to="/login" />}
+        />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <Toaster richColors position="top-center" closeButton />

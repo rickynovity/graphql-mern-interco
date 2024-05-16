@@ -10,11 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@apollo/client": "^3.10.4",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "antd": "^5.16.5",
     "chart.js": "^4.4.2",
     "clsx": "^2.1.1",
     "framer-motion": "^11.1.7",
+    "graphql": "^16.8.1",
     "mini-svg-data-uri": "^1.4.4",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",

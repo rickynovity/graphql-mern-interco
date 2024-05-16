@@ -75,7 +75,7 @@ const server = new ApolloServer({
 await server.start();
 
 app.use(
-  "/",
+  "/graphql",
   cors({
     origin: process.env.CLIENT_ORIGIN || "http://localhost:3000",
     credentials: true,
@@ -90,6 +90,6 @@ await new Promise((resolve) => httpServer.listen({ port }, resolve));
 await initDb(process.env.MONGO_DB_URL);
 
 console.log(`
-  🚀  Server is running : http://localhost:${port}
+  🚀  Server is running : http://localhost:${port}/graphql
   🔉  Listening on port ${port}
 `);
