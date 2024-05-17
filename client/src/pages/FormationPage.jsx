@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { RiCheckFill, RiDeleteBin5Line } from "react-icons/ri";
 import { TiEdit } from "react-icons/ti";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import TrainerInfo from "../components/TrainerInfo";
 import {
   LuCalendarCheck2,
@@ -18,22 +18,29 @@ import { Tag } from "antd";
 import AvaButton from "../components/ui/AvaButton";
 import { LiaCheckDoubleSolid } from "react-icons/lia";
 import CompletedFormationModal from "../components/CompletedFormationModal";
+import { useQuery } from "@apollo/client";
+import { GET_FORMATION } from "../graphql/queries/formation.query";
+import AvaQueryResult from "../components/AvaQueryResult";
+import { formatDate } from "../utils/formatDate";
+import { FaExternalLinkAlt } from "react-icons/fa";
+import { GoLinkExternal } from "react-icons/go";
 
 const FormationPage = () => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isLinkHovered, setIsLinkHovered] = useState(false);
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [showModalEdit, setShowModalEdit] = useState(false);
   const [showModalCompletedF, setShowModalCompletedF] = useState(false);
-  const endFormation = false;
-  const inProgress = true;
+  const { id } = useParams();
 
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
+  const { loading, error, data } = useQuery(GET_FORMATION, {
+    variables: { formationId: id },
+  });
 
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-  };
+  const handleMouseEnter = () => setIsHovered(true);
+  const handleMouseLeave = () => setIsHovered(false);
+  const handleMouseEnterForLink = () => setIsLinkHovered(true);
+  const handleMouseLeaveForLink = () => setIsLinkHovered(false);
 
   const tagRender = ({ label, value, closable, onClose }) => {
     const onPreventMouseDown = (event) => {
@@ -94,8 +101,13 @@ const FormationPage = () => {
     setShowModalCompletedF(false);
   };
 
+  const startDate = data?.formation?.startDate;
+  const endDate = data?.formation?.endDate;
+  const formattedStartDate = formatDate(startDate);
+  const formattedEndDate = formatDate(endDate);
+
   return (
-    <>
+    <AvaQueryResult error={error} loading={loading} data={data}>
       <EditFormationModal
         visible={showModalEdit}
         onOk={handleEditOk}
@@ -118,24 +130,34 @@ const FormationPage = () => {
           <div className="relative dark:bg-slate-950/50 rounded-lg border border-sky-200 mx-auto max-w-screen-xl px-24 py-16 lg:flex lg:items-center mb-20 shadow-lg">
             <div className="mx-auto max-w-xl text-center text-slate-900 dark:text-white/90">
               <div className="mt-10">
-                <h1 className="text-2xl font-extrabold sm:text-5xl text-sky-500">
-                  Formation title
-                </h1>
+                <div className="flex items-center">
+                  <Link
+                    target="_blank"
+                    to={data?.formation?.source}
+                    onMouseEnter={handleMouseEnterForLink}
+                    onMouseLeave={handleMouseLeaveForLink}
+                    className="hover:scale-110 transition ease-in-out mr-4"
+                  >
+                    {isLinkHovered ? (
+                      <GoLinkExternal size={35} className="text-sky-500" />
+                    ) : (
+                      <FaExternalLinkAlt
+                        size={25}
+                        className="text-yellow-700 mt-4"
+                      />
+                    )}
+                  </Link>
+                  <h1 className="text-3xl font-extrabold sm:text-4xl text-sky-500">
+                    {data?.formation?.title}
+                  </h1>
+                </div>
                 <div className="mt-4 mb-10 flex flex-wrap gap-1 justify-center">
-                  <AvaTechBadge techName="GraphQL" />
-                  <AvaTechBadge techName="Apollo GraphQL" />
-                  <AvaTechBadge techName="React" />
-                  <AvaTechBadge techName="Node.js" />
-                  <AvaTechBadge techName="MongoDB" />
-                  <AvaTechBadge techName="Tailwind CSS" />
-                  <AvaTechBadge techName="Ant Design" />
+                  {data?.formation?.tagNames?.map((tagName) => (
+                    <AvaTechBadge key={tagName?._id} techName={tagName?.name} />
+                  ))}
                 </div>
                 <p className="mt-4 sm:text-lg/relaxed overflow-auto max-h-[200px]">
-                  Formation Description : Lorem ipsum dolor sit amet consectetur
-                  adipisicing elit. Quasi, dicta. Natus reiciendis, omnis
-                  corrupti facere animi eum ex, nesciunt doloribus quod aut iste
-                  repudiandae ducimus praesentium consequatur aspernatur. Magni,
-                  aliquid.
+                  {data?.formation?.objectives}
                 </p>
               </div>
               <div
@@ -164,22 +186,21 @@ const FormationPage = () => {
                   <RiDeleteBin5Line size={15} />
                 </button>
               </div>
-              <TrainerInfo />
+              <TrainerInfo trainer={data?.formation?.trainer} />
               <div className="flex justify-between mt-10">
-                <span className="flex justify-center gap-1.5 sm:justify-start">
+                <span className="flex justify-center gap-1.5 sm:justify-start mr-4">
                   <LuCalendarHeart size={20} />
-                  Started on 10 Apr 2024
+                  Started on {formattedStartDate}
                 </span>
-                {inProgress && (
+                {endDate ? (
+                  <span className="flex justify-center gap-1.5 sm:justify-start text-lime-600 font-semibold">
+                    <LuCalendarCheck2 size={20} />
+                    End on {formattedEndDate}
+                  </span>
+                ) : (
                   <span className="flex justify-center gap-1.5 sm:justify-start text-sky-600 font-semibold">
                     <LuCalendarClock size={20} />
                     In Progress ...
-                  </span>
-                )}
-                {endFormation && (
-                  <span className="flex justify-center gap-1.5 sm:justify-start text-lime-600 font-semibold">
-                    <LuCalendarCheck2 size={20} />
-                    End on 10 May 2024
                   </span>
                 )}
               </div>
@@ -202,7 +223,7 @@ const FormationPage = () => {
           </div>
         </section>
       </div>
-    </>
+    </AvaQueryResult>
   );
 };
 

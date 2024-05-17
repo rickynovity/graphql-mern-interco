@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const NotFoundPage = () => {
+const NotFoundPage = ({ error }) => {
   return (
     <div
       className="grid h-full place-content-center  px-4"
@@ -19,6 +19,8 @@ const NotFoundPage = () => {
         <p className="mt-4 text-gray-500 dark:text-gray-100">
           We cannot find this page.
         </p>
+
+        {error && <p className="mt-4 text-red-500 text-2xl">{error.message}</p>}
 
         <Link
           to="/"

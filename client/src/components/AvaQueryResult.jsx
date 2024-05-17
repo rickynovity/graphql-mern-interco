@@ -1,9 +1,10 @@
 import React from "react";
 import AvaSpinner from "./ui/AvaSpinner";
+import NotFoundPage from "../pages/NotFoundPage";
 
-const AvaQueryResult = ({ loading, error, data, children }) => {
+const AvaQueryResult = ({ loading, error, data, children, className }) => {
   if (error) {
-    return <p>ERROR: {error.message}</p>;
+    return <NotFoundPage error={error} />;
   }
   if (loading) {
     return (
@@ -16,7 +17,7 @@ const AvaQueryResult = ({ loading, error, data, children }) => {
     return <p>Nothing to show...</p>;
   }
   if (data) {
-    return children;
+    return <div className={className}>{children}</div>;
   }
 };
 

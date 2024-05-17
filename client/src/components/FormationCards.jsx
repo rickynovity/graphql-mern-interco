@@ -5,17 +5,47 @@ import { IoIosArrowRoundForward } from "react-icons/io";
 import { BsFolder } from "react-icons/bs";
 import useIsHomePage from "../hook/useIsHomePage";
 import AvaPagination from "./ui/AvaPagination";
+import { useQuery } from "@apollo/client";
+import AvaQueryResult from "../components/AvaQueryResult";
+import FormationCardEmpty from "./FormationCardEmpty";
+import {
+  GET_AUTHENTICATED_USER,
+  GET_FORMATIONS_BY_USER,
+} from "../graphql/queries/user.query";
 
 const FormationCards = () => {
   const isHomePage = useIsHomePage();
 
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-      <FormationCard />
-      <FormationCard />
-      <FormationCard />
-      <FormationCard />
-      {isHomePage ? (
+  const { data: authUser } = useQuery(GET_AUTHENTICATED_USER);
+  const {
+    loading,
+    error,
+    data: getFormationsByUser,
+  } = useQuery(GET_FORMATIONS_BY_USER, {
+    variables: {
+      userId: authUser?.authUser?._id,
+    },
+  });
+
+  const renderFormations = (formations) => {
+    return formations.length > 0 ? (
+      formations.map((formation) => (
+        <FormationCard
+          key={formation._id}
+          formation={formation}
+          authUser={authUser.authUser}
+        />
+      ))
+    ) : (
+      <FormationCardEmpty />
+    );
+  };
+
+  const renderHomePageContent = (formations) => {
+    const recentFormations = formations.slice(-4).reverse();
+    return (
+      <>
+        {renderFormations(recentFormations)}
         <div className="sm:col-span-2 flex justify-center items-center p-5">
           <Link
             to="/formations"
@@ -36,17 +66,24 @@ const FormationCards = () => {
             </span>
           </Link>
         </div>
-      ) : (
-        <>
-          <FormationCard />
-          <FormationCard />
-          <FormationCard />
-          <FormationCard />
-          <FormationCard />
-          <AvaPagination />
-        </>
-      )}
-    </div>
+      </>
+    );
+  };
+
+  const formations = getFormationsByUser?.user?.formations || [];
+
+  return (
+    <AvaQueryResult
+      error={error}
+      loading={loading}
+      data={getFormationsByUser?.user}
+      className="grid grid-cols-1 sm:grid-cols-3 gap-6"
+    >
+      {isHomePage
+        ? renderHomePageContent(formations)
+        : renderFormations(formations)}
+      {!isHomePage && <AvaPagination />}
+    </AvaQueryResult>
   );
 };
 

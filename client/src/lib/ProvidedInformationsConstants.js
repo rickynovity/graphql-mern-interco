@@ -1,4 +1,6 @@
 import { RiCloseLine, RiCheckFill } from "react-icons/ri";
+import { FaRegCircleUser, FaRegEnvelope } from "react-icons/fa6";
+import { FiPhone } from "react-icons/fi";
 
 export const words = [
   {
@@ -94,6 +96,19 @@ export const getColorByTechName = (techName) => {
     case "Ant Design":
       return "#0170FE";
     default:
+      return "#FFFAAA";
+  }
+};
+
+export const getColorByCategory = (category) => {
+  switch (category) {
+    case "Full Stack":
+      return "bg-[#E10098]/25 text[#E10098]";
+    case "Backend":
+      return "bg-[#5FA04E]/25 text-[#5FA04E]";
+    case "Frontend":
+      return "bg-[#0284C7]/25 text[#0284C7]";
+    default:
       return "";
   }
 };
@@ -106,4 +121,11 @@ export const tagNameOptions = [
   { value: "mongo", label: "MongoDB" },
   { value: "tailwind", label: "Tailwind CSS" },
   { value: "antd", label: "Ant Design" },
+];
+
+export const infoItems = (name, biography, email, phone) => [
+  { icon: FaRegCircleUser, text: name, link: "#" },
+  { icon: null, text: biography, link: "#" },
+  { icon: FaRegEnvelope, text: email, link: "#" },
+  { icon: FiPhone, text: phone, link: "#" },
 ];

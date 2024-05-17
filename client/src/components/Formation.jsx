@@ -13,6 +13,10 @@ const Formation = () => {
   const [showModal, setShowModal] = useState(false);
   const isHomePage = useIsHomePage();
 
+  const commonButtonProps = {
+    onClick: () => setShowModal(true),
+  };
+
   const buttons = [
     {
       icon: BsFolderPlus,
@@ -20,7 +24,7 @@ const Formation = () => {
       bgColor: "bg-sky-700/25",
       hoverBgColor: "hover:bg-sky-500",
       hoverTextColor: "hover:text-white",
-      onClick: () => setShowModal(true),
+      ...commonButtonProps,
     },
   ];
 
@@ -29,7 +33,7 @@ const Formation = () => {
       icon: BsFolder,
       text: "New formation",
       hoverBgColor: "hover:bg-sky-700/25",
-      onClick: () => setShowModal(true),
+      ...commonButtonProps,
     },
   ];
 
