@@ -38,7 +38,7 @@ const formationTypeDef = gql`
     startDate: String
     endDate: String
     categoryId: ID!
-    statusId: ID!
+    statusId: ID
     languageId: ID!
     trainerId: ID!
     tagNameIds: [ID!]
@@ -54,7 +54,7 @@ const formationTypeDef = gql`
     startDate: String
     endDate: String
     categoryId: ID!
-    statusId: ID!
+    statusId: ID
     languageId: ID!
     trainerId: ID!
     tagNameIds: [ID!]

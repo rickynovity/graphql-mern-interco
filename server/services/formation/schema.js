@@ -39,7 +39,7 @@ const FormationSchema = new mongoose.Schema(
     statusId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Status",
-      require: true,
+      require: false,
     },
     languageId: {
       type: mongoose.Schema.Types.ObjectId,

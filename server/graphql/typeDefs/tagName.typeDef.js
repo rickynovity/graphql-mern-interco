@@ -4,7 +4,6 @@ const tagNameTypeDef = gql`
   type TagName {
     _id: ID!
     name: String
-    formation: Formation!
   }
 
   type Query {
@@ -21,13 +20,11 @@ const tagNameTypeDef = gql`
 
   input CreateTagNameInput {
     name: String!
-    formationId: ID!
   }
 
   input UpdateTagNameInput {
     tagNameId: ID!
     name: String!
-    formationId: ID!
   }
 `;
 export default tagNameTypeDef;

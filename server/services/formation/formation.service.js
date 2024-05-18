@@ -18,7 +18,7 @@ const FormationService = {
         `All formations by user with id: ${userId}`,
         totalFormationsByUser
       );
-      return await Formation.find({ userId });
+      return await Formation.find({ userId }).sort({ createdAt: -1 });
     } catch (error) {
       throw new Error(`Error retrieving formations for user: ${error.message}`);
     }

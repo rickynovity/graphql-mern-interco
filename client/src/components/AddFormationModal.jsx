@@ -1,37 +1,110 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AvaModal from "./ui/AvaModal";
 import { BsFolderPlus } from "react-icons/bs";
 import AvaInputText from "./ui/form/AvaInputText";
+import AvaInputNumber from "./ui/form/AvaInputNumber";
 import AvaSelect from "./ui/form/AvaSelect";
+import { useMutation, useQuery } from "@apollo/client";
+import { CREATE_FORMATION } from "../graphql/mutations/formation.mutation";
+import AvaSpinner from "./ui/AvaSpinner";
+import NotFoundPage from "../pages/NotFoundPage";
+import useFetchData from "../hook/useFetchData";
+import { getColorByTechName } from "../lib";
+import { Tag } from "antd";
 
-const AddFormationModal = ({ visible, onOk, onCancel, options, tagRender }) => {
-  const today = new Date();
+const AddFormationModal = ({ visible, onOk, onCancel }) => {
+  const today = new Date().toISOString().slice(0, 10);
+  const {
+    authUser,
+    categoriesData,
+    trainersData,
+    tagNamesData,
+    languagesData,
+    loading,
+    error,
+  } = useFetchData();
+
   const [formData, setFormData] = useState({
     title: "",
     objectives: "",
     source: "",
-    progress: "",
-    category: "fullstack",
-    trainer: "Ricky Bertrand",
-    stack: ["graphql"],
-    language: "fr",
-    startDate: today.toISOString().slice(0, 10),
+    progress: 0,
+    categoryId: "",
+    trainerId: "",
+    tagNameIds: [],
+    languageId: "",
+    startDate: today,
     endDate: null,
+    userId: authUser?.authUser?._id || "",
   });
+
+  useEffect(() => {
+    if (authUser?.authUser?._id) {
+      setFormData((prevData) => ({
+        ...prevData,
+        userId: authUser.authUser._id,
+      }));
+    }
+  }, [authUser]);
 
   const handleChange = (e, name) => {
     const value = e.target ? e.target.value : e;
-    console.log("Name:", name);
-    console.log("Value:", value);
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: name === "progress" ? parseInt(value) : value,
     });
   };
 
-  const handleSubmit = () => {
-    onOk(formData);
+  const [createFormation] = useMutation(CREATE_FORMATION, {
+    refetchQueries: ["getFormations"],
+  });
+
+  const handleSubmit = async () => {
+    try {
+      const data = await createFormation({ variables: { input: formData } });
+      onOk(data);
+    } catch (error) {
+      toast.error(`Une erreur s'est produite : ${error.message}`);
+    }
   };
+
+  const tagRender = ({ label, closable, onClose }) => {
+    const onPreventMouseDown = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    };
+    return (
+      <Tag
+        color={getColorByTechName(label)}
+        onMouseDown={onPreventMouseDown}
+        closable={closable}
+        onClose={onClose}
+        style={{ marginInlineEnd: 4 }}
+      >
+        {label}
+      </Tag>
+    );
+  };
+
+  if (loading) return <AvaSpinner />;
+  if (error) return <NotFoundPage />;
+
+  const categoryOptions = categoriesData.categories.map((category) => ({
+    value: category._id,
+    label: category.name,
+  }));
+  const trainerOptions = trainersData.trainers.map((trainer) => ({
+    value: trainer._id,
+    label: trainer.name,
+  }));
+  const tagNameOptions = tagNamesData.tagNames.map((tagName) => ({
+    value: tagName._id,
+    label: tagName.name,
+  }));
+  const languageOptions = languagesData.languages.map((language) => ({
+    value: language._id,
+    label: language.name,
+  }));
 
   return (
     <AvaModal
@@ -78,12 +151,14 @@ const AddFormationModal = ({ visible, onOk, onCancel, options, tagRender }) => {
           </div>
           <div className="">
             <p className=" text-[16px]">Progress</p>
-            <AvaInputText
+            <AvaInputNumber
               name="progress"
-              type="number"
               placeholder="Progress here ..."
               value={formData.progress}
-              onChange={(e) => handleChange(e, "progress")}
+              onChange={(value) => handleChange(value, "progress")}
+              min={0}
+              max={100}
+              step={1}
             />
           </div>
           <div className="flex flex-wrap justify-center sm:justify-between gap-4">
@@ -92,15 +167,10 @@ const AddFormationModal = ({ visible, onOk, onCancel, options, tagRender }) => {
               <AvaSelect
                 className="w-full dark:bg-slate-950"
                 name="category"
-                defaultValue="fullstack"
                 allowClear
-                options={[
-                  { value: "fullstack", label: "Full Stack" },
-                  { value: "backend", label: "Backend" },
-                  { value: "frontend", label: "FrontEnd" },
-                ]}
-                value={formData.category}
-                onChange={(value) => handleChange(value, "category")}
+                options={categoryOptions}
+                value={formData.categoryId}
+                onChange={(value) => handleChange(value, "categoryId")}
               />
             </div>
             <div className="w-full sm:w-[170px]">
@@ -109,14 +179,9 @@ const AddFormationModal = ({ visible, onOk, onCancel, options, tagRender }) => {
                 className="w-full dark:bg-slate-950"
                 name="trainer"
                 allowClear
-                defaultValue="Ricky Bertrand"
-                options={[
-                  { value: "trainer1", label: "Ricky Bertrand" },
-                  { value: "trainer2", label: "Ravoatabia" },
-                  { value: "trainer3", label: "Ranavalona" },
-                ]}
-                value={formData.trainer}
-                onChange={(value) => handleChange(value, "trainer")}
+                options={trainerOptions}
+                value={formData.trainerId}
+                onChange={(value) => handleChange(value, "trainerId")}
               />
             </div>
           </div>
@@ -127,12 +192,11 @@ const AddFormationModal = ({ visible, onOk, onCancel, options, tagRender }) => {
                 className="w-full dark:bg-slate-950"
                 name="stack"
                 allowClear
-                defaultValue={["graphql"]}
-                options={options}
+                options={tagNameOptions}
                 mode="multiple"
                 tagRender={tagRender}
-                value={formData.stack}
-                onChange={(value) => handleChange(value, "stack")}
+                value={formData.tagNameIds}
+                onChange={(value) => handleChange(value, "tagNameIds")}
               />
             </div>
             <div className="w-full sm:w-[100px]">
@@ -140,15 +204,10 @@ const AddFormationModal = ({ visible, onOk, onCancel, options, tagRender }) => {
               <AvaSelect
                 className="w-full dark:bg-slate-950"
                 name="language"
-                defaultValue="fr"
                 allowClear
-                options={[
-                  { value: "fr", label: "FR" },
-                  { value: "en", label: "EN" },
-                  { value: "de", label: "DE" },
-                ]}
-                value={formData.language}
-                onChange={(value) => handleChange(value, "language")}
+                options={languageOptions}
+                value={formData.languageId}
+                onChange={(value) => handleChange(value, "languageId")}
               />
             </div>
           </div>

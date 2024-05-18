@@ -42,7 +42,7 @@ const FormationCards = () => {
   };
 
   const renderHomePageContent = (formations) => {
-    const recentFormations = formations.slice(-4).reverse();
+    const recentFormations = formations.slice(0, 4);
     return (
       <>
         {renderFormations(recentFormations)}
