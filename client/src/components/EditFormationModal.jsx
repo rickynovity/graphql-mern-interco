@@ -1,56 +1,128 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AvaModal from "./ui/AvaModal";
 import { BsFolderPlus } from "react-icons/bs";
 import AvaInputText from "./ui/form/AvaInputText";
 import AvaSelect from "./ui/form/AvaSelect";
+import useFetchData from "../hook/useFetchData";
+import { UPDATE_FORMATION } from "../graphql/mutations/formation.mutation";
+import { Tag } from "antd";
+import AvaInputNumber from "./ui/form/AvaInputNumber";
+import { getColorByTechName, limitValue } from "../lib";
+import { useMutation } from "@apollo/client";
+import AvaSpinner from "./ui/AvaSpinner";
+import NotFoundPage from "../pages/NotFoundPage";
+import { toast } from "sonner";
+import { GET_FORMATIONS } from "../graphql/queries";
 
 const EditFormationModal = ({
   visible,
   onOk,
   onCancel,
-  options,
-  tagRender,
+  formationId,
+  initialData,
 }) => {
-  const today = new Date();
+  const today = new Date().toISOString().slice(0, 10);
+  const tagNames = initialData?.tagNames?.map((tagName) => tagName?._id);
+  const {
+    authUser,
+    categoriesData,
+    trainersData,
+    tagNamesData,
+    languagesData,
+    loading,
+    error,
+  } = useFetchData();
+
   const [formData, setFormData] = useState({
-    title: "",
-    objectives: "",
-    source: "",
-    progress: "",
-    category: "fullstack",
-    trainer: "Ricky Bertrand",
-    stack: ["graphql"],
-    language: "fr",
-    startDate: today.toISOString().slice(0, 10),
-    endDate: false,
+    title: initialData?.title,
+    objectives: initialData?.objectives,
+    source: initialData?.source,
+    progress: initialData?.progress,
+    categoryId: initialData?.category?._id,
+    trainerId: initialData?.trainer?._id,
+    tagNameIds: tagNames,
+    languageId: initialData?.language?._id,
+    startDate: initialData?.startDate,
+    endDate: initialData?.endDate || today,
+    userId: authUser?.authUser?._id || "",
   });
 
   const handleChange = (e, name) => {
-    const value = e.target ? e.target.value : e;
-    console.log("Name:", name);
-    console.log("Value:", value);
+    const value = e && e.target ? e.target.value : e;
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: name === "progress" ? parseInt(value) : value,
     });
   };
 
-  const handleSubmit = () => {
-    onOk(formData);
+  const [updateFormation] = useMutation(UPDATE_FORMATION, {
+    refetchQueries: [{ query: GET_FORMATIONS }],
+  });
+
+  const handleSubmit = async () => {
+    const progress = parseInt(formData.progress);
+    try {
+      const data = await updateFormation({
+        variables: {
+          input: { ...formData, progress, formationId },
+        },
+      });
+      onOk(data);
+    } catch (error) {
+      toast.error(`Une erreur s'est produite : ${error.message}`);
+    }
   };
+
+  const tagRender = ({ label, closable, onClose }) => {
+    const onPreventMouseDown = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    };
+    return (
+      <Tag
+        color={getColorByTechName(label)}
+        onMouseDown={onPreventMouseDown}
+        closable={closable}
+        onClose={onClose}
+        style={{ marginInlineEnd: 4 }}
+      >
+        {label}
+      </Tag>
+    );
+  };
+
+  if (loading) return <AvaSpinner />;
+  if (error) return <NotFoundPage />;
+
+  const categoryOptions = categoriesData.categories.map((category) => ({
+    value: category._id,
+    label: category.name,
+  }));
+  const trainerOptions = trainersData.trainers.map((trainer) => ({
+    value: trainer._id,
+    label: trainer.name,
+  }));
+  const tagNameOptions = tagNamesData.tagNames.map((tagName) => ({
+    value: tagName._id,
+    label: tagName.name,
+  }));
+  const languageOptions = languagesData.languages.map((language) => ({
+    value: language._id,
+    label: language.name,
+  }));
 
   return (
     <AvaModal
       visible={visible}
       icon={BsFolderPlus}
-      title={`Mark your formation`}
+      title={`Edit your formation`}
       onOk={handleSubmit}
       okText="Valider"
       cancelText="Annuler"
       onCancel={onCancel}
     >
       <div className="flex items-start gap-10">
-        <div className="mt-10 flex-1 text-[16px] space-y-5">
+        <form className="mt-10 flex-1 text-[16px] space-y-5">
           <div className="">
             <p className=" text-[16px]">Formation title</p>
             <AvaInputText
@@ -81,27 +153,26 @@ const EditFormationModal = ({
           </div>
           <div className="">
             <p className=" text-[16px]">Progress</p>
-            <AvaInputText
-              type="number"
+            <AvaInputNumber
+              name="progress"
               placeholder="Progress here ..."
               value={formData.progress}
-              onChange={(e) => handleChange(e, "progress")}
+              onChange={(value) => handleChange(value, "progress")}
+              min={0}
+              max={100}
+              step={1}
+              formatter={limitValue}
             />
           </div>
           <div className="flex flex-wrap justify-center sm:justify-between gap-4">
             <div className="w-full sm:w-[170px]">
               <p className=" text-[16px]">Category</p>
               <AvaSelect
-                defaultValue="fullstack"
                 style={{ width: "100%" }}
                 allowClear
-                options={[
-                  { value: "fullstack", label: "Full Stack" },
-                  { value: "backend", label: "Backend" },
-                  { value: "frontend", label: "FrontEnd" },
-                ]}
-                value={formData.category}
-                onChange={(value) => handleChange(value, "category")}
+                options={categoryOptions}
+                value={formData.categoryId}
+                onChange={(value) => handleChange(value, "categoryId")}
               />
             </div>
             <div className="w-full sm:w-[170px]">
@@ -109,14 +180,9 @@ const EditFormationModal = ({
               <AvaSelect
                 style={{ width: "100%" }}
                 allowClear
-                defaultValue="Ricky Bertrand"
-                options={[
-                  { value: "trainer1", label: "Ricky Bertrand" },
-                  { value: "trainer2", label: "Ravoatabia" },
-                  { value: "trainer3", label: "Ranavalona" },
-                ]}
-                value={formData.trainer}
-                onChange={(value) => handleChange(value, "trainer")}
+                options={trainerOptions}
+                value={formData.trainerId}
+                onChange={(value) => handleChange(value, "trainerId")}
               />
             </div>
           </div>
@@ -126,31 +192,25 @@ const EditFormationModal = ({
               <AvaSelect
                 style={{ width: "100%" }}
                 allowClear
-                defaultValue={["graphql"]}
-                options={options}
+                options={tagNameOptions}
                 mode="multiple"
                 tagRender={tagRender}
-                value={formData.stack}
-                onChange={(value) => handleChange(value, "stack")}
+                value={formData.tagNameIds}
+                onChange={(value) => handleChange(value, "tagNameIds")}
               />
             </div>
             <div className="w-full sm:w-[100px]">
               <p className=" text-[16px]">Language</p>
               <AvaSelect
-                defaultValue="fr"
                 style={{ width: "100%" }}
                 allowClear
-                options={[
-                  { value: "fr", label: "FR" },
-                  { value: "en", label: "EN" },
-                  { value: "de", label: "DE" },
-                ]}
-                value={formData.language}
-                onChange={(value) => handleChange(value, "language")}
+                options={languageOptions}
+                value={formData.languageId}
+                onChange={(value) => handleChange(value, "languageId")}
               />
             </div>
           </div>
-        </div>
+        </form>
       </div>
     </AvaModal>
   );

@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
-import { infoItems } from "../lib/ProvidedInformationsConstants";
+import { infoItems } from "../lib";
 
 const TrainerInfo = ({ trainer }) => {
   const { name, biography, contact } = trainer || {};

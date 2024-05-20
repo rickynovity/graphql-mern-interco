@@ -149,18 +149,6 @@ const AddFormationModal = ({ visible, onOk, onCancel }) => {
               onChange={(e) => handleChange(e, "source")}
             />
           </div>
-          <div className="">
-            <p className=" text-[16px]">Progress</p>
-            <AvaInputNumber
-              name="progress"
-              placeholder="Progress here ..."
-              value={formData.progress}
-              onChange={(value) => handleChange(value, "progress")}
-              min={0}
-              max={100}
-              step={1}
-            />
-          </div>
           <div className="flex flex-wrap justify-center sm:justify-between gap-4">
             <div className="w-full sm:w-[170px]">
               <p className=" text-[16px]">Category</p>

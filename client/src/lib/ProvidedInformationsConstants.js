@@ -129,3 +129,19 @@ export const infoItems = (name, biography, email, phone) => [
   { icon: FaRegEnvelope, text: email, link: "#" },
   { icon: FiPhone, text: phone, link: "#" },
 ];
+
+export const formatProgress = (value) =>
+  value === 100 ? "Done" : `${value} %`;
+
+export const twoColors = {
+  "0%": "#108ee9",
+  "100%": "#87d068",
+};
+
+export const limitValue = (value) => {
+  if (value >= 0) {
+    return value <= 100 ? value : 100;
+  } else {
+    return 0;
+  }
+};

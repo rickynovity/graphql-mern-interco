@@ -1,60 +1,61 @@
-import React, { forwardRef } from 'react';
-import clsx from 'clsx';
-import PropTypes from 'prop-types';
+import React, { forwardRef } from "react";
+import clsx from "clsx";
+import PropTypes from "prop-types";
 
-const AvaButton = forwardRef(({
-  icon: Icon,
-  iconSize = 17,
-  text,
-  textColor = 'text-sky-600',
-  hoverTextColor,
-  bgColor = 'bg-transparent',
-  borderColor = 'border-transparent',
-  borderRadius = 'rounded',
-  paddingX = 'px-2',
-  paddingY = 'py-4',
-  hoverScale = 'hover:scale-110',
-  hoverBgColor = 'hover:bg-sky-100',
-  justify = 'justify-center',
-  items = 'items-center',
-  isLast = false,
-  className = '',
-  ...restProps
-}, ref) => {
-  const customClassName = clsx(
-    'sm:w-[180px]',
-    'w-full',
-    borderRadius,
-    bgColor,
-    borderColor,
-    textColor,
-    hoverTextColor,
-    paddingX,
-    paddingY,
-    'text-xs',
-    'font-medium',
-    'transition',
-    'ease-in-out',
-    hoverScale,
-    hoverBgColor,
-    'flex',
-    justify,
-    items,
-    !isLast && 'mr-5',
-    className
-  );
+const AvaButton = forwardRef(
+  (
+    {
+      icon: Icon,
+      iconSize = 17,
+      text,
+      textColor = "text-sky-600",
+      hoverTextColor,
+      bgColor = "bg-transparent",
+      borderColor = "border-transparent",
+      borderRadius = "rounded",
+      paddingX = "px-2",
+      paddingY = "py-4",
+      hoverScale = "hover:scale-110",
+      hoverBgColor = "hover:bg-sky-100",
+      justify = "justify-center",
+      items = "items-center",
+      isLast = false,
+      className = "",
+      ...restProps
+    },
+    ref
+  ) => {
+    const customClassName = clsx(
+      "sm:w-[180px]",
+      "w-full",
+      borderRadius,
+      bgColor,
+      borderColor,
+      textColor,
+      hoverTextColor,
+      paddingX,
+      paddingY,
+      "text-xs",
+      "font-medium",
+      "transition",
+      "ease-in-out",
+      hoverScale,
+      hoverBgColor,
+      "flex",
+      justify,
+      items,
+      !isLast && "mr-5",
+      className
+    );
 
-  return (
-    <button
-      ref={ref}
-      className={customClassName}
-      {...restProps}
-    >
-      {Icon && <Icon size={iconSize} className='mr-2' />}
-      {text}
-    </button>
-  );
-});
+    return (
+      <button ref={ref} className={customClassName} {...restProps}>
+        {Icon && <Icon size={iconSize} className="mr-2 ml-3" />}
+        {text}
+      </button>
+    );
+  }
+);
 
 AvaButton.propTypes = {
   icon: PropTypes.elementType, // Type de l'icône

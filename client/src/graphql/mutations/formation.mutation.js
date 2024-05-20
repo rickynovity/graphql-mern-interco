@@ -68,6 +68,10 @@ export const DELETE_FORMATION = gql`
         _id
         name
       }
+      tagNames {
+        _id
+        name
+      }
       user {
         _id
         fullName
@@ -94,15 +98,15 @@ export const UPDATE_FORMATION = gql`
         _id
         name
       }
-      status {
-        _id
-        name
-      }
       language {
         _id
         name
       }
       trainer {
+        _id
+        name
+      }
+      tagNames {
         _id
         name
       }

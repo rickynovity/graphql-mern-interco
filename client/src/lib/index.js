@@ -4,8 +4,12 @@ import {
   buttonsDeleteModal,
   buttonsModal,
   configProviderTheme,
+  formatProgress,
   getColorByTechName,
+  infoItems,
+  limitValue,
   tagNameOptions,
+  twoColors,
 } from "./ProvidedInformationsConstants";
 
 export {
@@ -17,4 +21,8 @@ export {
   getColorByTechName,
   tagNameOptions,
   configProviderTheme,
+  infoItems,
+  twoColors,
+  limitValue,
+  formatProgress,
 };
