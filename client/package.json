@@ -26,7 +26,8 @@
     "react-icons": "^5.1.0",
     "react-router-dom": "^6.23.0",
     "sonner": "^1.4.41",
-    "tailwind-merge": "^2.3.0"
+    "tailwind-merge": "^2.3.0",
+    "vite": "^5.2.11"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
