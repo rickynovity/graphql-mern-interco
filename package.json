@@ -5,7 +5,9 @@
   "author": "madava",
   "license": "MIT",
   "scripts": {
-    "server:dev": "nodemon server/index.js",
+    "server:dev": "NODE_ENV=development nodemon server/index.js",
+    "server:prod": "NODE_ENV=production node server/index.js",
+    "front:build": "yarn install && yarn install --cwd client && yarn build --cwd client",
     "start:dev_container": "docker compose up --build -V",
     "stop:dev_container": "docker compose down"
   },

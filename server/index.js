@@ -3,6 +3,7 @@ import express from "express";
 import http from "http";
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "path";
 
 import passport from "passport";
 import session from "express-session";
@@ -24,6 +25,7 @@ const app = express();
 dotenv.config();
 const port = process.env.NODE_DOCKER_PORT || 4000;
 configurePassport();
+const __dirname = path.resolve();
 
 const initDb = async (mongoUrl) => {
   try {
@@ -85,6 +87,12 @@ app.use(
     context: async ({ req, res }) => buildContext({ req, res }),
   })
 );
+
+app.use(express.static(path.join(__dirname, "client/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client/dist", "index.html"));
+});
 
 await new Promise((resolve) => httpServer.listen({ port }, resolve));
 await initDb(process.env.MONGO_DB_URL);
